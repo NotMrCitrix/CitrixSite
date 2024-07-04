@@ -15,12 +15,13 @@
             padding: 10px;
             border: 1px solid #444;
             background-color: #1e1e1e;
+            margin-top: 20px;
         }
         .download-section, .links-section {
-            margin-top: 20px;
             padding: 10px;
             border: 1px solid #444;
             background-color: #1e1e1e;
+            margin-top: 20px;
         }
         .download-link, .external-link {
             color: #4CAF50;
@@ -30,11 +31,25 @@
             display: block;
             margin-top: 10px;
         }
+        .dropdown {
+            margin-top: 20px;
+        }
+        .dropdown select {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #444;
+            background-color: #1e1e1e;
+            color: #FFFFFF;
+        }
     </style>
 </head>
 <body>
     <h1>GenP Dove Updates</h1>
-    <div id="content">Loading updates...</div>
+
+    <div id="content">
+        <p>Loading updates...</p>
+        <p id="updateText"></p>
+    </div>
 
     <div class="download-section">
         <h2>Download HostFromDove.py</h2>
@@ -57,15 +72,43 @@
         <a class="external-link" href="https://www.reddit.com/r/GenP/" target="_blank">Visit the GenP Subreddit</a>
     </div>
 
+    <div class="dropdown">
+        <label for="updateSelect">Select an update:</label>
+        <select id="updateSelect" onchange="updateContent()">
+            <option value="Loading">Loading updates...</option>
+        </select>
+    </div>
+
     <script>
         async function fetchUpdates() {
             try {
                 const response = await fetch('GenpDoveUpdates.txt');
                 const text = await response.text();
-                document.getElementById('content').innerText = text;
+                const updates = text.split('\n');
+                const selectElement = document.getElementById('updateSelect');
+
+                // Clear existing options
+                selectElement.innerHTML = '';
+
+                // Add options to the dropdown
+                updates.forEach((update, index) => {
+                    const option = document.createElement('option');
+                    option.value = index;
+                    option.innerText = update.trim();
+                    selectElement.appendChild(option);
+                });
+
+                // Update content initially
+                updateContent();
             } catch (error) {
                 console.error('Error fetching updates:', error);
             }
+        }
+
+        function updateContent() {
+            const selectedIndex = document.getElementById('updateSelect').value;
+            const updates = document.getElementById('updateSelect').options;
+            document.getElementById('updateText').innerText = updates[selectedIndex].innerText;
         }
 
         // Fetch updates every 5 seconds
