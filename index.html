@@ -3,53 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GenP Dove Updates</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: #FFFFFF;
-            margin: 20px;
-        }
-        .download-section, .links-section {
-            padding: 10px;
-            border: 1px solid #444;
-            background-color: #1e1e1e;
-            margin-top: 20px;
-        }
-        .download-link, .external-link {
-            color: #4CAF50;
-            text-decoration: none;
-        }
-        .external-link {
-            display: block;
-            margin-top: 10px;
-        }
-    </style>
+    <title>Updated GenP host file</title>
 </head>
 <body>
-    <h1>GenP Dove Updates</h1>
+    <h1>Updated GenP host file</h1>
+    <button id="downloadButton">f*ck Adobe</button>
+    <div id="status"></div>
 
-    <div class="download-section">
-        <h2>Download HostFromDove.py</h2>
-        <a class="download-link" href="https://NotMrCitrix.github.io/CitrixSite/HostFromDove.py" download>Download HostFromDove.py</a>
-    </div>
+    <script>
+        document.getElementById('downloadButton').addEventListener('click', function () {
+            document.getElementById('status').innerText = 'Fetching text...';
 
-    <div class="download-section">
-        <h2>Download host</h2>
-        <a class="download-link" href="https://NotMrCitrix.github.io/CitrixSite/hosts" download>Download host</a>
-    </div>
-
-    <div class="download-section">
-        <h2>Download GenP Source Code</h2>
-        <a class="download-link" href="https://notmrcitrix.github.io/CitrixSite/AdobeGenP-3.4.13.4-ORIGINAL.au3" download>Download GenP source code</a>
-    </div>
-
-    <div class="links-section">
-        <h2>External Links</h2>
-        <a class="external-link" href="https://discord.com/invite/BVBh2XVn9s" target="_blank">Join the GenP Discord</a>
-        <a class="external-link" href="https://www.reddit.com/r/GenP/" target="_blank">Visit the GenP Subreddit</a>
-    </div>
-
+            fetch('https://a.dove.isdumb.one/list.txt')
+                .then(response => {
+                    console.log(response);
+                    if (!response.ok) {
+                        throw new Error(`Network response was not ok: ${response.statusText} (${response.status})`);
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    const blob = new Blob([data], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'hosts';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    document.getElementById('status').innerText = 'Download complete';
+                })
+                .catch(error => {
+                    console.error('Error fetching the text file:', error);
+                    document.getElementById('status').innerText = `Error fetching the text file: ${error.message}`;
+                });
+        });
+    </script>
 </body>
 </html>
